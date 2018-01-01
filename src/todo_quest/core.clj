@@ -10,6 +10,8 @@
    [todo-quest.page :as pg]
    [todo-quest.util :as util]))
 
+(handlers/intern-static! "/static/" (handlers/resources "public/"))
+
 (handlers/intern-handler-fn!
  "/" :login-page
  (fn [req]
@@ -21,7 +23,8 @@
          [:ul
           (map
            (fn [t] [:li {:style (str "text-decoration: " (if (:done? t) "line-through" "none") ";") } (:name t)])
-           (db/get-user-tasks user))])))
+           (db/get-user-tasks user))]
+         [:script {:src "/static/js/main.js" :type "text/javascript" :charset "utf-8"}])))
      (util/ok
       (pg/pg
        [:p "Hello there!"]
