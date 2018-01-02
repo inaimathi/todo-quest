@@ -46,17 +46,14 @@
              user (json/parse-string (:body @res))]
          (println "GOT THE USER" user)
          (if-let [name (get user "login")]
-           (let [user (db/get-or-add-user!
-                       {:source :github
-                        :role :user
-                        :access-token access-token
-                        :name name
-                        :url (get user "html_url")
-                        :avatar (get user "avatar_url")})]
-             {:status 301
-              :session {:user user}
-              :headers {"Content-Type" "text/plain" "location" "/"}
-              :body "You've been logged in! :D"})
+           {:status 301
+            :session {:user (db/get-or-add-user!
+                             {:source :github
+                              :role :user
+                              :access-token access-token
+                              :name name})}
+            :headers {"Content-Type" "text/plain" "location" "/"}
+            :body "You've been logged in! :D"}
            (util/ok
             (pg/pg
              [:p "Got auth and access token!"]
@@ -70,7 +67,8 @@
          [:p "BUT IT FUCKING FAILED"]
          [:pre (str @res)]))))))
 
-(defn logged-in? [req] (not (not (get-in req [:session :user :name]))))
+(defn logged-in? [req]
+  (not (not (get-in req [:session :user :name]))))
 
 (defn logged-in-handler!
   [route name f]
