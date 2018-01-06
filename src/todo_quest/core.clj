@@ -18,9 +18,15 @@
  "/" :login-page
  (fn [req]
    (if (auth/logged-in? req)
-     (let [user (get-in req [:session :user])]
+     (let [user (get-in req [:session :user])
+           level (db/user-level user)]
        (util/ok
         (pg/pg
+         [:div {:id "avatar"}
+          [:ul
+           [:li "Name: " (:name user)]
+           [:li "XP: " (db/user-xp user) "/" (db/level->xp (inc level))]
+           [:li "Level: " level]]]
          [:div {:id "todo-quest"}
           (tmpl/task-list (db/get-user-tasks user))]
          [:div {:id "toolbar"}

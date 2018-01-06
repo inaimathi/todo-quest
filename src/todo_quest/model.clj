@@ -18,18 +18,25 @@
 
 (defn user->key [user] (str (name (:source user)) "::" (:name user)))
 
+(defn get-tasks-matching [query] (with-db #(mc/find-maps % "tasks" query)))
+(defn get-task [task-id] (first (get-tasks-matching {:_id task-id})))
+(defn get-user-tasks [user] (get-tasks-matching {:created-by (:_id user)}))
+
+(defn xp->level [xp] (Math/round (Math/floor (* 0.4 (Math/sqrt xp)))))
+(def level->xp-map (->> (range 4001)
+                        (map #(* 10 %))
+                        (map (fn [xp] [(xp->level xp) xp]))
+                        (partition-by first)
+                        (map first)
+                        (into {})))
+(defn level->xp [level] (get level->xp-map level))
+(defn user-xp [user]
+  (* 20 (count (get-tasks-matching {:completed-by (:_id user)}))))
+(defn user-level [user] (xp->level (user-xp user)))
+
 (defn get-user [user] (with-db #(first (mc/find-maps % "users" {:user-keys (user->key user)}))))
 (defn add-user! [user]
   (let [u (update user :user-keys #(vec (concat % [(user->key user)])))]
     (with-db #(mc/insert-and-return % "users" u))))
 (defn get-or-add-user! [user]
   (or (get-user user) (add-user! user)))
-
-(defn get-tasks-matching [query] (with-db #(mc/find-maps % "tasks" query)))
-(defn get-task [task-id] (first (get-tasks-matching {:_id task-id})))
-(defn get-user-tasks [user] (get-tasks-matching {:created-by (:_id user)}))
-
-(defn user-xp [user]
-  (* 20 (count (get-tasks-matching {:completed-by (:_id user)}))))
-(defn user-level [user]
-  (Math/round (Math/floor (* 0.4 (Math/sqrt (user-xp user))))))
