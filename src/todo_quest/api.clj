@@ -8,22 +8,62 @@
    [todo-quest.model :as db]
    [todo-quest.util :as util]))
 
-(def not-logged-in
-  {:status 400
-   :headers {"Content-Type" "application/json"}
-   :body (json/encode {:error "not logged in"})})
+(cheshire.generate/add-encoder
+ org.bson.types.ObjectId
+ (fn [c jsonGenerator]
+   (.writeString jsonGenerator (str c))))
 
-(handlers/intern-handler-fn!
- "/api/task" :add-task
- (fn [req]
-   (if (auth/logged-in? req)
-     (db/add-task! (get-in req [:session :user]) (dissoc (json/decode (get-in req [:params "task"])) :_id))
-     not-logged-in)))
+(defn -api
+  ([body] (-api 200 body))
+  ([status body]
+   {:status status
+    :headers {"Content-Type" "application/json"}
+    :body (json/encode body)}))
 
-(handlers/intern-handler-fn!
- "/api/task/:task-id/complete" :complete-task
- (fn [req]
-   (if (auth/logged-in? req)
-     (let [t (db/get-task (org.bson.types.ObjectId. (get-in req [:params "task-id"])))]
-       (db/complete-task! (get-in req [:session :user]) t))
-     not-logged-in)))
+(def not-logged-in (-api 400 {:error "not logged in"}))
+
+(defn json-api! [uri f]
+  (handlers/intern-handler-fn!
+   uri (keyword (clojure.string/replace uri #"(/:.*?/|[/-]+)" "-"))
+   #(if (auth/logged-in? %) (-api (f %)) not-logged-in)))
+
+(defn classic-api!
+  [uri f]
+  (handlers/intern-handler-fn!
+   uri (keyword (clojure.string/replace uri #"(/:.*?/|[/-]+)" "-"))
+   #(if (auth/logged-in? %)
+      (do (f %)
+          {:status 307
+           :headers {"Content-Type" "text/plain" "location" "/"}
+           :body "Redirecting..."})
+      not-logged-in)))
+
+(handlers/intern-handler-fn! "/api/ping" :ping-handler (fn [_] (-api :pong)))
+
+(json-api!
+ "/api/task/new"
+ #(db/add-task!
+   (get-in % [:session :user])
+   (dissoc (json/decode (get-in % [:params "task"])) :_id)))
+
+(classic-api!
+ "/api/classic/new-task"
+ #(db/add-task! (get-in % [:session :user]) {:text (java.net.URLDecoder/decode (get-in % [:params "task-text"]))}))
+
+(json-api!
+ "/api/task/:task-id/complete"
+ #(let [t (db/get-task (org.bson.types.ObjectId. (get-in % [:params "task-id"])))]
+    (db/complete-task! (get-in % [:session :user]) t)))
+
+(classic-api!
+ "/api/classic/complete-task"
+ #(let [t (db/get-task (org.bson.types.ObjectId. (get-in % [:params "task-id"])))]
+    (println "FOUND TASK" (str t))
+    (db/complete-task! (get-in % [:session :user]) t)))
+
+(json-api!
+ "/api/task/list"
+ #(map (fn [el]
+         (update el :_id str))
+       (db/get-user-tasks
+        (get-in % [:session :user]))))

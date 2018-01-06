@@ -16,7 +16,8 @@
 
                  [oauth-clj "0.1.15"]
 
-                 [cljsjs/jquery "3.2.1-0"]]
+                 [cljsjs/jquery "3.2.1-0"]
+                 [crate "0.2.4"]]
   :cljsbuild {:builds [{:source-paths ["src/todo_quest/front_end"]
                         :compiler {:output-to "resources/public/js/main.js"
                                    :optimizations :whitespace

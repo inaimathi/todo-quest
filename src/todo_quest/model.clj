@@ -25,8 +25,8 @@
 (defn get-or-add-user! [user]
   (or (get-user user) (add-user! user)))
 
-(defn get-task [task-id] (with-db #(mc/find-maps % "tasks" task-id)))
 (defn get-tasks-matching [query] (with-db #(mc/find-maps % "tasks" query)))
+(defn get-task [task-id] (first (get-tasks-matching {:_id task-id})))
 (defn get-user-tasks [user] (get-tasks-matching {:created-by (:_id user)}))
 
 (defn user-xp [user]
