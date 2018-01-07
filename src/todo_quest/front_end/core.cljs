@@ -13,7 +13,7 @@
    "/api/task/list"
    (fn [data]
      (.log js/console "Woo!" dom-elem data)
-     (.html dom-elem (crate/html (tmpl/task-list data))))))
+     (.html dom-elem (crate/html (tmpl/task-pane data))))))
 
 (defn add-task! [task-text]
   (util/$post

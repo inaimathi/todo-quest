@@ -8,11 +8,6 @@
    [todo-quest.model :as db]
    [todo-quest.util :as util]))
 
-(cheshire.generate/add-encoder
- org.bson.types.ObjectId
- (fn [c jsonGenerator]
-   (.writeString jsonGenerator (str c))))
-
 (defn -api
   ([body] (-api 200 body))
   ([status body]
@@ -63,7 +58,4 @@
 
 (json-api!
  "/api/task/list"
- #(map (fn [el]
-         (update el :_id str))
-       (db/get-user-tasks
-        (get-in % [:session :user]))))
+ #(db/get-user-tasks (get-in % [:session :user])))

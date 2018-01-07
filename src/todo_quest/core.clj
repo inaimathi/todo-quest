@@ -15,23 +15,27 @@
 (handlers/intern-static! "/static/" (handlers/resources "public/"))
 
 (handlers/intern-handler-fn!
- "/" :login-page
+ "/" :main-page
  (fn [req]
    (if (auth/logged-in? req)
-     (let [user (get-in req [:session :user])
-           level (db/user-level user)]
+     (let [user (get-in req [:session :user])]
        (util/ok
         (pg/pg
          [:div {:id "avatar"}
           [:ul
            [:li "Name: " (:name user)]
-           [:li "XP: " (db/user-xp user) "/" (db/level->xp (inc level))]
-           [:li "Level: " level]]]
+           [:li "XP: " (db/user-xp user) "/" (db/level->xp (inc (db/user-level user)))]
+           [:li "Level: " (db/user-level user)]]]
          [:div {:id "todo-quest"}
-          (tmpl/task-list (db/get-user-tasks user))]
+          (tmpl/task-pane (db/get-user-tasks user))]
          [:div {:id "toolbar"}
           [:form {:action "/api/classic/new-task"}
-           [:input {:type "submit" :value "+"}] [:input {:type "text" :name "task-text"}]]
+           [:div {:class "form-row"}
+            [:div {:class "col-md-1"}
+             [:span {:class "input-group-prepend"}
+              [:button {:type "submit" :class "btn btn-primary"} "+"]]]
+            [:div {:class "col-md-6"}
+             [:input {:type "text" :name "task-text" :class "form-control"}]]]]
           [:a {:href "/oauth/log-out"} "Log Out"]]
          [:script {:src "/static/js/main.js" :type "text/javascript" :charset "utf-8"}])))
      (util/ok
@@ -41,6 +45,10 @@
 
 (defn -main
   []
+  (cheshire.generate/add-encoder
+   org.bson.types.ObjectId
+   (fn [c jsonGenerator]
+     (.writeString jsonGenerator (str c))))
   (server/run-server
    (->> handlers/routes-handler
         wrap-session)
