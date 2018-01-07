@@ -1,1 +1,6 @@
+.task-list { margin-bottom: 25px; }
+.task { margin-bottom: 3px; }
+
 .check-uncheck { display: inline; margin-right: 5px; }
+
+#toolbar { margin: 10px; }

@@ -53,8 +53,17 @@
 (classic-api!
  "/api/classic/complete-task"
  #(let [t (db/get-task (org.bson.types.ObjectId. (get-in % [:params "task-id"])))]
-    (println "FOUND TASK" (str t))
     (db/complete-task! (get-in % [:session :user]) t)))
+
+(json-api!
+ "/api/task/:task-id/uncomplete"
+ #(let [t (db/get-task (org.bson.types.ObjectId. (get-in % [:params "task-id"])))]
+    (db/uncomplete-task! (get-in % [:session :user]) t)))
+
+(classic-api!
+ "/api/classic/uncomplete-task"
+ #(let [t (db/get-task (org.bson.types.ObjectId. (get-in % [:params "task-id"])))]
+    (db/uncomplete-task! (get-in % [:session :user]) t)))
 
 (json-api!
  "/api/task/list"

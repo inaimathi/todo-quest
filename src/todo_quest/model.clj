@@ -16,6 +16,16 @@
             (assoc task :done? true :completed-by (:_id user) :completed (java.util.Date.)))
            (first (mc/find-maps % "tasks" {:_id (:_id task)}))))))
 
+(defn uncomplete-task! [user task]
+  (if (:done? task)
+    (with-db
+      #(do
+         (mc/update-by-id % "tasks" (:_id task) (assoc task :done? false))
+         (first (mc/find-maps % "tasks" {:_id (:_id task)}))))
+    task))
+
+
+
 (defn user->key [user] (str (name (:source user)) "::" (:name user)))
 
 (defn get-tasks-matching [query] (with-db #(mc/find-maps % "tasks" query)))

@@ -26,17 +26,20 @@
            [:li "Name: " (:name user)]
            [:li "XP: " (db/user-xp user) "/" (db/level->xp (inc (db/user-level user)))]
            [:li "Level: " (db/user-level user)]]]
-         [:div {:id "todo-quest"}
-          (tmpl/task-pane (db/get-user-tasks user))]
+
          [:div {:id "toolbar"}
           [:form {:action "/api/classic/new-task"}
-           [:div {:class "form-row"}
+           [:div {:class "input-group"}
             [:div {:class "col-md-1"}
              [:span {:class "input-group-prepend"}
               [:button {:type "submit" :class "btn btn-primary"} "+"]]]
-            [:div {:class "col-md-6"}
-             [:input {:type "text" :name "task-text" :class "form-control"}]]]]
-          [:a {:href "/oauth/log-out"} "Log Out"]]
+            [:div {:class "col-md-10"}
+             [:input {:type "text" :name "task-text" :class "form-control"}]]]]]
+
+         [:div {:id "todo-quest"}
+          (tmpl/task-pane (db/get-user-tasks user))]
+
+         [:a {:href "/oauth/log-out"} "Log Out"]
          [:script {:src "/static/js/main.js" :type "text/javascript" :charset "utf-8"}])))
      (util/ok
       (pg/pg
