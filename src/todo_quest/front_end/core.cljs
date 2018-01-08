@@ -3,7 +3,7 @@
             [crate.core :as crate]
 
             [todo-quest.front-end.util :as util]
-            [todo-quest.front-end.template :as tmpl]))
+            [todo-quest.shared.template :as tmpl]))
 
 (def dom-elem (atom nil))
 

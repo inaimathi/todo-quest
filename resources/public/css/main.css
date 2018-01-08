@@ -1,6 +1,9 @@
-.task-list { margin-bottom: 25px; }
-.task { margin-bottom: 3px; }
+.task-list { margin-bottom: 55px;}
+.task { margin-bottom: 20px; list-style-type: none; }
 
-.check-uncheck { display: inline; margin-right: 5px; }
+.task .status-change { border-radius: 10px; padding: 10px; font-weight: bolder; font-size: x-large; color: #000; }
+.status-change.check { background-color: green; }
+.status-change.uncheck { background-color: orange; }
+.status-change.fail { background-color: red; }
 
 #toolbar { margin: 10px; }

@@ -18,7 +18,7 @@
 
                  [cljsjs/jquery "3.2.1-0"]
                  [crate "0.2.4"]]
-  :cljsbuild {:builds [{:source-paths ["src/todo_quest/front_end"]
+  :cljsbuild {:builds [{:source-paths ["src/todo_quest/front_end" "src/todo_quest/shared"]
                         :compiler {:output-to "resources/public/js/main.js"
                                    :optimizations :whitespace
                                    :pretty-print true}

@@ -10,7 +10,7 @@
    [todo-quest.page :as pg]
    [todo-quest.util :as util]
 
-   [todo-quest.front-end.template :as tmpl]))
+   [todo-quest.shared.template :as tmpl]))
 
 (handlers/intern-static! "/static/" (handlers/resources "public/"))
 
