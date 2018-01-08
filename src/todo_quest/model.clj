@@ -5,32 +5,31 @@
 
 (defn with-db [f] (let [db (mg/get-db (mg/connect) "todo-quest")] (f db)))
 
-(defn add-task! [user task]
-  (with-db #(mc/insert % "tasks" (assoc task :assigned-to (:_id user) :created-by (:_id user) :done? false :created (java.util.Date.)))))
-(defn complete-task! [user task]
-  (if (:done? task)
-    task
+(defn add-quest! [user quest]
+  (with-db #(mc/insert % "quests" (assoc quest :assigned-to (:_id user) :created-by (:_id user) :done? false :created (java.util.Date.)))))
+(defn complete-quest! [user quest]
+  (if (:done? quest)
+    quest
     (with-db
       #(do (mc/update-by-id
-            % "tasks" (:_id task)
-            (assoc task :done? true :completed-by (:_id user) :completed (java.util.Date.)))
-           (first (mc/find-maps % "tasks" {:_id (:_id task)}))))))
+            % "quests" (:_id quest)
+            (assoc quest :done? true :completed-by (:_id user) :completed (java.util.Date.)))
+           (first (mc/find-maps % "quests" {:_id (:_id quest)}))))))
 
-(defn uncomplete-task! [user task]
-  (if (:done? task)
+(defn uncomplete-quest! [user quest]
+  (if (:done? quest)
     (with-db
       #(do
-         (mc/update-by-id % "tasks" (:_id task) (assoc task :done? false))
-         (first (mc/find-maps % "tasks" {:_id (:_id task)}))))
-    task))
-
+         (mc/update-by-id % "quests" (:_id quest) (assoc quest :done? false))
+         (first (mc/find-maps % "quests" {:_id (:_id quest)}))))
+    quest))
 
 
 (defn user->key [user] (str (name (:source user)) "::" (:name user)))
 
-(defn get-tasks-matching [query] (with-db #(mc/find-maps % "tasks" query)))
-(defn get-task [task-id] (first (get-tasks-matching {:_id task-id})))
-(defn get-user-tasks [user] (get-tasks-matching {:created-by (:_id user)}))
+(defn get-quests-matching [query] (with-db #(mc/find-maps % "quests" query)))
+(defn get-quest [quest-id] (first (get-quests-matching {:_id quest-id})))
+(defn get-user-quests [user] (get-quests-matching {:created-by (:_id user)}))
 
 (defn xp->level [xp] (Math/round (Math/floor (* 0.4 (Math/sqrt xp)))))
 (def level->xp-map (->> (range 4001)
@@ -41,7 +40,7 @@
                         (into {})))
 (defn level->xp [level] (get level->xp-map level))
 (defn user-xp [user]
-  (* 20 (count (get-tasks-matching {:completed-by (:_id user)}))))
+  (* 20 (count (get-quests-matching {:completed-by (:_id user)}))))
 (defn user-level [user] (xp->level (user-xp user)))
 
 (defn get-user [user] (with-db #(first (mc/find-maps % "users" {:user-keys (user->key user)}))))

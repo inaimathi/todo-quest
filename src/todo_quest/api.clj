@@ -36,35 +36,35 @@
 (handlers/intern-handler-fn! "/api/ping" :ping-handler (fn [_] (-api :pong)))
 
 (json-api!
- "/api/task/new"
- #(db/add-task!
+ "/api/quest/new"
+ #(db/add-quest!
    (get-in % [:session :user])
-   (dissoc (json/decode (get-in % [:params "task"])) :_id)))
+   (dissoc (json/decode (get-in % [:params "quest"])) :_id)))
 
 (classic-api!
- "/api/classic/new-task"
- #(db/add-task! (get-in % [:session :user]) {:text (java.net.URLDecoder/decode (get-in % [:params "task-text"]))}))
+ "/api/classic/new-quest"
+ #(db/add-quest! (get-in % [:session :user]) {:text (java.net.URLDecoder/decode (get-in % [:params "quest-text"]))}))
 
 (json-api!
- "/api/task/:task-id/complete"
- #(let [t (db/get-task (org.bson.types.ObjectId. (get-in % [:params "task-id"])))]
-    (db/complete-task! (get-in % [:session :user]) t)))
+ "/api/quest/:quest-id/complete"
+ #(let [t (db/get-quest (org.bson.types.ObjectId. (get-in % [:params "quest-id"])))]
+    (db/complete-quest! (get-in % [:session :user]) t)))
 
 (classic-api!
- "/api/classic/complete-task"
- #(let [t (db/get-task (org.bson.types.ObjectId. (get-in % [:params "task-id"])))]
-    (db/complete-task! (get-in % [:session :user]) t)))
+ "/api/classic/complete-quest"
+ #(let [t (db/get-quest (org.bson.types.ObjectId. (get-in % [:params "quest-id"])))]
+    (db/complete-quest! (get-in % [:session :user]) t)))
 
 (json-api!
- "/api/task/:task-id/uncomplete"
- #(let [t (db/get-task (org.bson.types.ObjectId. (get-in % [:params "task-id"])))]
-    (db/uncomplete-task! (get-in % [:session :user]) t)))
+ "/api/quest/:quest-id/uncomplete"
+ #(let [t (db/get-quest (org.bson.types.ObjectId. (get-in % [:params "quest-id"])))]
+    (db/uncomplete-quest! (get-in % [:session :user]) t)))
 
 (classic-api!
- "/api/classic/uncomplete-task"
- #(let [t (db/get-task (org.bson.types.ObjectId. (get-in % [:params "task-id"])))]
-    (db/uncomplete-task! (get-in % [:session :user]) t)))
+ "/api/classic/uncomplete-quest"
+ #(let [t (db/get-quest (org.bson.types.ObjectId. (get-in % [:params "quest-id"])))]
+    (db/uncomplete-quest! (get-in % [:session :user]) t)))
 
 (json-api!
- "/api/task/list"
- #(db/get-user-tasks (get-in % [:session :user])))
+ "/api/quest/list"
+ #(db/get-user-quests (get-in % [:session :user])))

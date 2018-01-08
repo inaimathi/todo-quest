@@ -9,6 +9,7 @@
    [todo-quest.model :as db]
    [todo-quest.page :as pg]
    [todo-quest.util :as util]
+   [todo-quest.api :as api]
 
    [todo-quest.shared.template :as tmpl]))
 
@@ -28,16 +29,12 @@
            [:li "Level: " (db/user-level user)]]]
 
          [:div {:id "toolbar"}
-          [:form {:action "/api/classic/new-task"}
-           [:div {:class "input-group"}
-            [:div {:class "col-md-1"}
-             [:span {:class "input-group-prepend"}
-              [:button {:type "submit" :class "btn btn-primary"} "+"]]]
-            [:div {:class "col-md-10"}
-             [:input {:type "text" :name "task-text" :class "form-control"}]]]]]
+          [:form {:action "/api/classic/new-quest"}
+           [:button {:type "submit" :class "btn btn-primary new-quest-button"} "+"]
+           [:input {:type "text" :name "quest-text" :class "form-control new-quest-name"}]]]
 
          [:div {:id "todo-quest"}
-          (tmpl/task-pane (db/get-user-tasks user))]
+          (tmpl/quest-pane (db/get-user-quests user))]
 
          [:a {:href "/oauth/log-out"} "Log Out"]
          [:script {:src "/static/js/main.js" :type "text/javascript" :charset "utf-8"}])))

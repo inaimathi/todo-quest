@@ -1,9 +1,13 @@
-.task-list { margin-bottom: 55px;}
-.task { margin-bottom: 20px; list-style-type: none; }
+.quest-list { margin-bottom: 55px;}
+.quest-list-title { list-style-type: none; margin: 0px; padding: 0px; }
+.quest { margin-bottom: 15px; list-style-type: none; }
+.quest-controls { margin-right: 10px; }
 
-.task .status-change { border-radius: 10px; padding: 10px; font-weight: bolder; font-size: x-large; color: #000; }
-.status-change.check { background-color: green; }
-.status-change.uncheck { background-color: orange; }
-.status-change.fail { background-color: red; }
+.quest .status-change { border-radius: 10px; padding: 10px 15px; font-weight: bolder; font-size: x-large; }
+.status-change.check { border-radius: 10px 0px 0px 10px; }
+.status-change.uncheck { }
+.status-change.fail { color: black; font-size: xx-large; padding: 4px 10px; border-radius: 0px 10px 10px 0px; }
 
 #toolbar { margin: 10px; }
+#toolbar .new-quest-button { font-size: x-large; padding-left: 15px; padding-right: 15px; border-radius: 10px 0px 0px 10px; display: inline; }
+#toolbar .new-quest-name { display: inline; width: 85%; border-radius: 0px 10px 10px 0px; padding-top: 22px; padding-bottom: 24px; }

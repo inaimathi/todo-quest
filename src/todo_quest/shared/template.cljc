@@ -1,25 +1,29 @@
 (ns todo-quest.shared.template)
 
-(defn task
+(defn quest
   [t]
-  [:li {:class "task"}
-   (if (:done? t)
-     [:a {:class "status-change uncheck" :href (str "/api/classic/uncomplete-task?task-id=" (:_id t))} "☑"]
-     [:a {:class "status-change check" :href (str "/api/classic/complete-task?task-id=" (:_id t))} "☐"])
+  [:li {:class "quest"}
+   [:span {:class "quest-controls"}
+    (if (:done? t)
+      [:a {:class "btn btn-warning status-change uncheck" :href (str "/api/classic/uncomplete-quest?quest-id=" (:_id t))} "☑"]
+      [:a {:class "btn btn-success status-change check" :href (str "/api/classic/complete-quest?quest-id=" (:_id t))} "☐"])
 
-   (if (not (:done? t))
-     [:a {:class "status-change fail" :href (str "/api/classic/fail-task?task-id=" (:_id t))} "☠"])
-   [:span {:class "input-group-text"
+    (if (not (:done? t))
+      [:a {:class "btn btn-danger status-change fail" :href (str "/api/classic/fail-quest?quest-id=" (:_id t))} "☠"])]
+   [:span {:class "quest-text"
            :style (str "text-decoration: " (if (:done? t) "line-through" "none") ";") }
     (:text t)]])
 
-(defn task-list
-  [tasks & {:keys [class]}]
-  [:ul {:class (str "task-list " class)} (map task tasks)])
+(defn quest-list
+  [quests & {:keys [class title]}]
+  [:ul
+   {:class (str "quest-list " class)}
+   (when title [:li {:class "quest-list-title"} [:h1 title]])
+   (map quest quests)])
 
-(defn task-pane
-  [tasks]
-  (let [ts (group-by :done? tasks)]
+(defn quest-pane
+  [quests]
+  (let [ts (group-by :done? quests)]
     [:span
-     (task-list (get ts false) :class "in-progress")
-     (task-list (get ts true) :class "complete")]))
+     (quest-list (get ts false) :class "in-progress" :title "In Progress")
+     (quest-list (get ts true) :class "complete" :title "Complete")]))
