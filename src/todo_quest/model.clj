@@ -1,7 +1,9 @@
 (ns todo-quest.model
   (:require
    [monger.core :as mg]
-   [monger.collection :as mc]))
+   [monger.collection :as mc]
+
+   [todo-quest.shared.xp :as xp]))
 
 (defn with-db [f] (let [db (mg/get-db (mg/connect) "todo-quest")] (f db)))
 
@@ -31,17 +33,9 @@
 (defn get-quest [quest-id] (first (get-quests-matching {:_id quest-id})))
 (defn get-user-quests [user] (get-quests-matching {:created-by (:_id user)}))
 
-(defn xp->level [xp] (Math/round (Math/floor (* 0.4 (Math/sqrt xp)))))
-(def level->xp-map (->> (range 4001)
-                        (map #(* 10 %))
-                        (map (fn [xp] [(xp->level xp) xp]))
-                        (partition-by first)
-                        (map first)
-                        (into {})))
-(defn level->xp [level] (get level->xp-map level))
 (defn user-xp [user]
-  (* 20 (count (get-quests-matching {:completed-by (:_id user)}))))
-(defn user-level [user] (xp->level (user-xp user)))
+  (* 15 (count (get-quests-matching {:completed-by (:_id user)}))))
+(defn user-level [user] (xp/xp->level (user-xp user)))
 
 (defn get-user [user] (with-db #(first (mc/find-maps % "users" {:user-keys (user->key user)}))))
 (defn add-user! [user]

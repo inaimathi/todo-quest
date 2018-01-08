@@ -11,7 +11,8 @@
    [todo-quest.util :as util]
    [todo-quest.api :as api]
 
-   [todo-quest.shared.template :as tmpl]))
+   [todo-quest.shared.template :as tmpl]
+   [todo-quest.shared.xp :as xp]))
 
 (handlers/intern-static! "/static/" (handlers/resources "public/"))
 
@@ -25,7 +26,7 @@
          [:div {:id "avatar"}
           [:ul
            [:li "Name: " (:name user)]
-           [:li "XP: " (db/user-xp user) "/" (db/level->xp (inc (db/user-level user)))]
+           [:li "XP: " (db/user-xp user) "/" (xp/level->xp (inc (db/user-level user)))]
            [:li "Level: " (db/user-level user)]]]
 
          [:div {:id "toolbar"}
