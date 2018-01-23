@@ -10,4 +10,4 @@
 
 #toolbar { margin: 10px; }
 #toolbar .new-quest-button { font-size: x-large; padding-left: 15px; padding-right: 15px; border-radius: 10px 0px 0px 10px; display: inline; }
-#toolbar .new-quest-name { display: inline; width: 85%; border-radius: 0px 10px 10px 0px; padding-top: 22px; padding-bottom: 24px; }
+#toolbar .new-quest-name { display: inline; width: 85%; border-radius: 0px 10px 10px 0px; padding-top: 5px; padding-bottom: 7px; height: 48px; }
