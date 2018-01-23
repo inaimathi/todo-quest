@@ -3,29 +3,36 @@
    [monger.core :as mg]
    [monger.collection :as mc]
 
-   [todo-quest.shared.xp :as xp]))
+   [todo-quest.shared.xp :as xp]
+   [todo-quest.shared.util :as util :refer [complete?]]))
 
 (defn with-db [f] (let [db (mg/get-db (mg/connect) "todo-quest")] (f db)))
 
 (defn add-quest! [user quest]
-  (with-db #(mc/insert % "quests" (assoc quest :assigned-to (:_id user) :created-by (:_id user) :done? false :created (java.util.Date.)))))
+  (with-db #(mc/insert % "quests" (assoc quest :assigned-to (:_id user) :created-by (:_id user) :status :started :created (java.util.Date.)))))
 (defn complete-quest! [user quest]
-  (if (:done? quest)
+  (if (complete? quest)
     quest
     (with-db
       #(do (mc/update-by-id
             % "quests" (:_id quest)
-            (assoc quest :done? true :completed-by (:_id user) :completed (java.util.Date.)))
+            (assoc quest :status :completed :completed-by (:_id user) :completed (java.util.Date.)))
            (first (mc/find-maps % "quests" {:_id (:_id quest)}))))))
 
+(defn update-quest!
+  [user quest]
+  (with-db
+    #(let [q (first (mc/find-maps % "quests" {:_id (:_id quest)}))]
+       (when q
+         (mc/update-by-id % "quests" (:_id quest) (merge quest q))
+         (first (mc/find-maps % "quests" {:_id (:_id quest)}))))))
+
 (defn uncomplete-quest! [user quest]
-  (if (:done? quest)
-    (with-db
-      #(do
-         (mc/update-by-id % "quests" (:_id quest) (assoc quest :done? false))
-         (first (mc/find-maps % "quests" {:_id (:_id quest)}))))
+  (if (complete? quest)
+    (update-quest! user (assoc quest :status :started))
     quest))
 
+(defn fail-quest! [user quest] (update-quest! user (assoc quest :status :failed)))
 
 (defn user->key [user] (str (name (:source user)) "::" (:name user)))
 

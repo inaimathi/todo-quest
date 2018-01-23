@@ -1,6 +1,6 @@
 .quest-list { margin-bottom: 55px;}
 .quest-list-title { list-style-type: none; margin: 0px; padding: 0px; }
-.quest { margin-bottom: 15px; list-style-type: none; }
+.quest { margin-bottom: 5px; list-style-type: none; }
 .quest-controls { margin-right: 10px; }
 
 .quest .status-change { border-radius: 10px; padding: 10px 15px; font-weight: bolder; font-size: x-large; }

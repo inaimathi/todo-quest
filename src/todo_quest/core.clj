@@ -32,7 +32,7 @@
          [:div {:id "toolbar"}
           [:form {:action "/api/classic/new-quest"}
            [:button {:type "submit" :class "btn btn-primary new-quest-button"} "+"]
-           [:input {:type "text" :name "quest-text" :class "form-control new-quest-name"}]]]
+           [:input {:type "text" :name "text" :class "form-control new-quest-name"}]]]
 
          [:div {:id "todo-quest"}
           (tmpl/quest-pane (db/get-user-quests user))]
